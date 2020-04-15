@@ -53,6 +53,9 @@ func (f forwarder) work(id int, wg *sync.WaitGroup) {
 				continue
 			}
 			sumo.lines[idx] = p.Event.Line
+			sumo.host = p.Host
+			sumo.sourceName = p.Source
+			sumo.sourceCategory = p.SourceType
 		}
 
 		go func() {

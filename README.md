@@ -41,6 +41,7 @@ Start the server by running:
       "splunk-url": "https://your-forwarder-url:8080",
       "splunk-token": "token",
       "splunk-source": "source",
+      "splunk-sourcetype": "sourcetype",
       "splunk-index": "index",
       "splunk-format": "inline"
     }
