@@ -10,7 +10,7 @@ import (
 )
 
 func newHandler(authToken string, f forwarder) http.HandlerFunc {
-	bearerToken := "Bearer " + authToken
+	authToken = "Splunk " + authToken
 
 	return func(rw http.ResponseWriter, r *http.Request) {
 		log.Printf("addr=%q host=%q method=%q path=%q agent=%q\n",
@@ -21,9 +21,19 @@ func newHandler(authToken string, f forwarder) http.HandlerFunc {
 			r.UserAgent(),
 		)
 
-		if authToken != "" && r.Header.Get("Authorization") != bearerToken {
-			rw.WriteHeader(403)
+		if r.Method == http.MethodOptions {
+			rw.WriteHeader(200)
 			return
+		}
+
+		if authToken != "" {
+			if r.Header.Get("Authorization") != authToken {
+				log.Println("provided auth token is invalid!")
+
+				// Still return 200 so that docker wont retry sending logs
+				rw.WriteHeader(200)
+				return
+			}
 		}
 		defer rw.WriteHeader(200)
 
