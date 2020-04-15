@@ -21,7 +21,7 @@ func newHandler(authToken string, f forwarder) http.HandlerFunc {
 			r.UserAgent(),
 		)
 
-		if r.Header.Get("Authorization") != bearerToken {
+		if authToken != "" && r.Header.Get("Authorization") != bearerToken {
 			rw.WriteHeader(403)
 			return
 		}
@@ -71,7 +71,7 @@ func main() {
 
 	authToken := envStringVar("AUTH_TOKEN")
 	if authToken == "" {
-		log.Fatal("AUTH_TOKEN is required")
+		log.Println("WARNING: AUTH_TOKEN is not set!")
 	}
 
 	forwarder := newForwarder(collectorURL, workers)
