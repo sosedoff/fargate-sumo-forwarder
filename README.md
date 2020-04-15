@@ -23,12 +23,12 @@ Make sure to first set the environment variables:
 
 Start the server by running: 
 
-```
-  PORT=8080 \
-  WORKERS=5 \
-  AUTH_TOKEN=token \
-  COLLECTOR_URL=https://your-collector-url \
-  fargate-sumo-forwarder
+```bash
+PORT=8080 \
+WORKERS=5 \
+AUTH_TOKEN=token \
+COLLECTOR_URL=https://your-collector-url \
+fargate-sumo-forwarder
 ```
 
 ## ECS Configuration
