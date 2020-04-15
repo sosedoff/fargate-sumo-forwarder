@@ -39,7 +39,7 @@ func (p *sumopayload) send(client *http.Client, collector string) error {
 		req.Header.Add(headerName, p.sourceName)
 	}
 	if p.sourceCategory != "" {
-		req.Header.Add(headerCategory, p.sourceName)
+		req.Header.Add(headerCategory, p.sourceCategory)
 	}
 
 	resp, err := client.Do(req)
