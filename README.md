@@ -14,14 +14,21 @@ There are a few ways to get the logs shipped from ECS/Fargate to Sumologic:
 
 Make sure to first set the environment variables:
 
-- `PORT` - Server port
-- `COLLECTOR_URL` - Sumologic hosted collector URL
-- `COLLECTOR_WORKERS` - Number of log shipping workers
+| Variable      | Description                    | Default |
+|---------------|--------------------------------|---------|
+| PORT          | Server port                    | 5000    |
+| WORKERS       | Number of log delivery workers | 1       |
+| AUTH_TOKEN    | Authentication token           |         |
+| COLLECTOR_URL | Sumologic collector URL        |         |
 
 Start the server by running: 
 
 ```
-fargate-sumo-forwarder
+  PORT=8080 \
+  WORKERS=5 \
+  AUTH_TOKEN=token \
+  COLLECTOR_URL=https://your-collector-url \
+  fargate-sumo-forwarder
 ```
 
 ## ECS Configuration
@@ -31,7 +38,7 @@ fargate-sumo-forwarder
   "logConfiguration": {
     "logDriver": "splunk",
     "options": {
-      "splunk-url": "https://your-collector-url",
+      "splunk-url": "https://your-forwarder-url:8080",
       "splunk-token": "token",
       "splunk-source": "source",
       "splunk-index": "index",

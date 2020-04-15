@@ -9,8 +9,22 @@ import (
 	"time"
 )
 
-func newHandler(f forwarder) http.HandlerFunc {
+func newHandler(authToken string, f forwarder) http.HandlerFunc {
+	bearerToken := "Bearer " + authToken
+
 	return func(rw http.ResponseWriter, r *http.Request) {
+		log.Printf("addr=%q host=%q method=%q path=%q agent=%q\n",
+			r.RemoteAddr,
+			r.Host,
+			r.Method,
+			r.URL.Path,
+			r.UserAgent(),
+		)
+
+		if r.Header.Get("Authorization") != bearerToken {
+			rw.WriteHeader(403)
+			return
+		}
 		defer rw.WriteHeader(200)
 
 		startTime := time.Now()
@@ -41,13 +55,29 @@ func envIntVar(key string) int {
 
 func main() {
 	port := envStringVar("PORT")
+	if port == "" {
+		port = "5000"
+	}
+
 	collectorURL := envStringVar("COLLECTOR_URL")
-	workers := envIntVar("COLLECTOR_WORKERS")
+	if collectorURL == "" {
+		log.Fatal("COLLECTOR_URL is not set")
+	}
+
+	workers := envIntVar("WORKERS")
+	if workers == 0 {
+		workers = 1
+	}
+
+	authToken := envStringVar("AUTH_TOKEN")
+	if authToken == "" {
+		log.Fatal("AUTH_TOKEN is required")
+	}
 
 	forwarder := newForwarder(collectorURL, workers)
 	go forwarder.start()
 
-	http.HandleFunc("/", newHandler(forwarder))
+	http.HandleFunc("/", newHandler(authToken, forwarder))
 
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
