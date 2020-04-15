@@ -49,6 +49,26 @@ fargate-sumo-forwarder
 }
 ```
 
+## Test Locally
+
+Start forwarder on port 5000:
+
+```
+PORT=5000 \
+COLLECTOR_URL=https://sumologic-hosted-collector-url \
+fargate-sumo-forwarder
+```
+
+```bash
+docker run \
+  --log-driver=splunk \
+  --log-opt splunk-url=http://localhost:5000 \
+  --log-opt splunk-source=source \
+  --log-opt splunk-sourcetype=type \
+  -it \
+  alpine echo 'Test'
+```
+
 ## License
 
 MIT
