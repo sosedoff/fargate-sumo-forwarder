@@ -1,9 +1,13 @@
 package main
 
-type (
-	frame [2]int
-	entry []byte
+import (
+	"bytes"
+	"encoding/json"
+	"io"
+	"log"
+)
 
+type (
 	payload struct {
 		Time       string `json:"time"`
 		Host       string `json:"host"`
@@ -18,40 +22,20 @@ type (
 	}
 )
 
-func parseFrames(input []byte) []frame {
-	startpos := -1
-	matches := -1
-	frames := []frame{}
+func parsePayloads(input []byte) []payload {
+	decoder := json.NewDecoder(bytes.NewReader(input))
+	result := []payload{}
 
-	for i, c := range input {
-		if c == '{' {
-			if startpos < 0 {
-				startpos = i
-				matches = 1
-			} else {
-				matches++
+	for {
+		p := payload{}
+		if err := decoder.Decode(&p); err != nil {
+			if err == io.EOF {
+				break
 			}
+			log.Println("decode error:", err)
+			continue
 		}
-
-		if c == '}' {
-			matches--
-			if startpos >= 0 && matches == 0 {
-				frames = append(frames, frame{startpos, i + 1})
-				startpos = -1
-				matches = -1
-			}
-		}
-	}
-
-	return frames
-}
-
-func parseEntries(input []byte) []entry {
-	frames := parseFrames(input)
-	result := make([]entry, len(frames))
-
-	for idx, fr := range frames {
-		result[idx] = input[fr[0]:fr[1]]
+		result = append(result, p)
 	}
 
 	return result

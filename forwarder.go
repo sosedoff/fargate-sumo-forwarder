@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"sync"
@@ -37,21 +36,16 @@ func (f forwarder) work(id int, wg *sync.WaitGroup) {
 	for data := range f.data {
 		log.Printf("processing: %s\n", data)
 
-		entries := parseEntries(data)
-		if len(entries) == 0 {
+		payloads := parsePayloads(data)
+		if len(payloads) == 0 {
 			continue
 		}
 
 		sumo := sumopayload{
-			lines: make([]string, len(entries)),
+			lines: make([]string, len(payloads)),
 		}
 
-		for idx, e := range entries {
-			p := payload{}
-			if err := json.Unmarshal(e, &p); err != nil {
-				log.Println("json parse error:", err)
-				continue
-			}
+		for idx, p := range payloads {
 			sumo.lines[idx] = p.Event.Line
 			sumo.host = p.Host
 			sumo.sourceName = p.Source
