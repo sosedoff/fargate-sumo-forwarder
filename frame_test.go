@@ -12,21 +12,21 @@ type example struct {
 
 func Test_parseFrames(t *testing.T) {
 	examples := []example{
-		example{
+		{
 			``,
 			[]frame{},
 		},
-		example{
+		{
 			`{}`,
 			[]frame{
-				frame{0, 2},
+				{0, 2},
 			},
 		},
-		example{
+		{
 			`{"foo":"bar"}{"awesome":"sauce"}`,
 			[]frame{
-				frame{0, 13},
-				frame{13, 32},
+				{0, 13},
+				{13, 32},
 			},
 		},
 	}
