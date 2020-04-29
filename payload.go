@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func parsePayloads(input []byte) []payload {
+func parseInput(input []byte) []payload {
 	decoder := json.NewDecoder(bytes.NewReader(input))
 	result := []payload{}
 

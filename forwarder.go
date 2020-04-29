@@ -36,7 +36,7 @@ func (f forwarder) work(id int, wg *sync.WaitGroup) {
 	for data := range f.data {
 		log.Printf("processing: %s\n", data)
 
-		payloads := parsePayloads(data)
+		payloads := parseInput(data)
 		if len(payloads) == 0 {
 			continue
 		}
